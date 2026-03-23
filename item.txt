@@ -1,0 +1,1 @@
+weightslip = { name = 'weightslip', label = 'weightslip', weight = 1, type = 'item', image = 'paper.png', unique = false, useable = true, shouldClose = true, description = 'weightslip!' },

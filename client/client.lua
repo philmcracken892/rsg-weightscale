@@ -1,7 +1,7 @@
 local RSGCore = exports['rsg-core']:GetCoreObject()
 local lastWeightData = nil
 
--- Convert weight based on config
+
 local function ConvertWeight(weight)
     if Config.WeightUnit == "kg" then
         return math.floor(weight * Config.LbsToKg)
@@ -9,26 +9,28 @@ local function ConvertWeight(weight)
     return math.floor(weight)
 end
 
--- Setup ox_target for scale model
 CreateThread(function()
-    exports.ox_target:addModel(Config.ScaleModel, {
-        {
-            name = 'use_weightscale',
-            icon = 'fas fa-weight',
-            label = 'Step on Scale',
-            distance = Config.InteractDistance,
-            onSelect = function(data)
-                TriggerServerEvent('rsg-weightscale:server:checkWeight')
-            end
-        }
-    })
+    
+    for _, model in pairs(Config.ScaleModels) do
+        exports.ox_target:addModel(model, {
+            {
+                name = 'use_weightscale',
+                icon = 'fas fa-weight',
+                label = 'Step on Scale',
+                distance = Config.InteractDistance,
+                onSelect = function(data)
+                    TriggerServerEvent('rsg-weightscale:server:checkWeight')
+                end
+            }
+        })
+    end
 end)
 
--- Receive weight data from server (from scale)
+
 RegisterNetEvent('rsg-weightscale:client:showWeight', function(weight, playerName, isSlip, dateStr)
     local convertedWeight = ConvertWeight(weight)
     
-    -- Store last weight data
+  
     lastWeightData = {
         weight = convertedWeight,
         unit = Config.WeightUnit,
@@ -47,7 +49,7 @@ RegisterNetEvent('rsg-weightscale:client:showWeight', function(weight, playerNam
     })
 end)
 
--- Show weight slip (from item use)
+
 RegisterNetEvent('rsg-weightscale:client:showWeightSlip', function(slipData)
     if not slipData then
         RSGCore.Functions.Notify("This weight slip is blank!", "error")
@@ -67,7 +69,7 @@ RegisterNetEvent('rsg-weightscale:client:showWeightSlip', function(slipData)
     })
 end)
 
--- Close UI callback
+
 RegisterNUICallback('closeUI', function(data, cb)
     SetNuiFocus(false, false)
     cb('ok')

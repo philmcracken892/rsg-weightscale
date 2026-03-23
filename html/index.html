@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wild West Scale</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rye&family=Cinzel:wght@400;600;700&family=IM+Fell+English+SC&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --leather-dark: #1a0f05;
+            --leather-medium: #2d1a0d;
+            --leather-light: #3d2414;
+            --wood-dark: #2e1a0e;
+            --wood-medium: #4a2c17;
+            --wood-light: #5c3a1d;
+            --brass: #b8860b;
+            --brass-light: #d4a338;
+            --brass-dark: #8b6914;
+            --gold: #d4a338;
+            --parchment: #e8dcc4;
+            --parchment-dark: #d4c4a8;
+            --parchment-light: #f5ead6;
+            --cream: #f5e6c8;
+            --rust: #8b4513;
+            --text-dark: #1a0f05;
+            --ink: #2c1810;
+            --ink-faded: #5c4030;
+            --red-wax: #8b0000;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background: transparent !important;
+            font-family: 'Cinzel', serif;
+            user-select: none;
+        }
+
+        .container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .container.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           SCALE MODE STYLES
+           ═══════════════════════════════════════════════════════ */
+
+        .scale-frame {
+            display: none;
+            width: 880px;
+            height: 480px;
+            background: 
+                radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.05) 0%, transparent 50%),
+                linear-gradient(180deg, var(--leather-medium) 0%, var(--leather-dark) 100%);
+            border: 5px solid var(--wood-medium);
+            border-radius: 16px;
+            position: relative;
+            grid-template-columns: 1fr 300px;
+            grid-template-rows: auto 1fr;
+            box-shadow: 
+                0 0 0 2px var(--brass-dark),
+                0 0 0 6px var(--wood-dark),
+                0 20px 50px rgba(0,0,0,0.7),
+                inset 0 0 80px rgba(0,0,0,0.3);
+            animation: scaleAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .scale-frame.active {
+            display: grid;
+        }
+
+        @keyframes scaleAppear {
+            from { transform: scale(0.85) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        /* Decorative Bolts */
+        .bolt {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle at 35% 35%, var(--brass-light), var(--brass-dark));
+            border-radius: 50%;
+            border: 2px solid var(--wood-dark);
+            box-shadow: inset 0 -2px 4px rgba(0,0,0,0.4);
+            z-index: 10;
+        }
+        .bolt::after {
+            content: '+';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--wood-dark);
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .bolt-tl { top: 10px; left: 10px; }
+        .bolt-tr { top: 10px; right: 10px; }
+        .bolt-bl { bottom: 10px; left: 10px; }
+        .bolt-br { bottom: 10px; right: 10px; }
+
+        /* HEADER BAR */
+        .header-bar {
+            grid-column: 1 / -1;
+            background: linear-gradient(180deg, var(--wood-light) 0%, var(--wood-medium) 100%);
+            border-bottom: 3px solid var(--brass-dark);
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .header-bar::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: repeating-linear-gradient(90deg, var(--brass) 0px, var(--brass) 6px, transparent 6px, transparent 12px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            background: radial-gradient(circle at 30% 30%, var(--brass-light), var(--brass-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--leather-dark);
+            border: 2px solid var(--leather-dark);
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.3);
+        }
+
+        .brand-text {
+            font-family: 'Rye', cursive;
+            font-size: 20px;
+            color: var(--parchment);
+            text-shadow: 2px 2px 0 var(--leather-dark);
+            letter-spacing: 1px;
+        }
+
+        .header-date {
+            font-family: 'IM Fell English SC', serif;
+            font-size: 11px;
+            color: var(--parchment-dark);
+            letter-spacing: 1px;
+        }
+
+        .close-btn {
+            width: 34px;
+            height: 34px;
+            background: var(--leather-dark);
+            border: 2px solid var(--brass-dark);
+            border-radius: 50%;
+            color: var(--parchment);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: #8b0000;
+            border-color: #ff4444;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        /* LEFT SIDE - SCALE GAUGE */
+        .scale-section {
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* VINTAGE GAUGE */
+        .gauge-container {
+            width: 320px;
+            height: 175px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .gauge-body {
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 50% 100%, var(--cream) 0%, var(--parchment) 50%, var(--parchment-dark) 100%);
+            border-radius: 180px 180px 15px 15px;
+            border: 5px solid var(--brass);
+            box-shadow: 
+                inset 0 -25px 50px rgba(0,0,0,0.15),
+                inset 0 8px 25px rgba(255,255,255,0.3),
+                0 8px 25px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gauge-body::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            height: 55%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, transparent 100%);
+            border-radius: 180px 180px 0 0;
+            pointer-events: none;
+        }
+
+        /* Gauge Arc SVG */
+        .gauge-arc {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 260px;
+            height: 130px;
+        }
+
+        /* Gauge Numbers */
+        .gauge-numbers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .g-num {
+            position: absolute;
+            font-family: 'Rye', cursive;
+            font-size: 12px;
+            color: var(--leather-dark);
+            font-weight: bold;
+        }
+
+        .g-num-0 { bottom: 40px; left: 22px; }
+        .g-num-50 { bottom: 75px; left: 10px; }
+        .g-num-100 { top: 42px; left: 32px; }
+        .g-num-150 { top: 14px; left: 50%; transform: translateX(-50%); }
+        .g-num-200 { top: 42px; right: 32px; }
+        .g-num-250 { bottom: 75px; right: 10px; }
+        .g-num-300 { bottom: 40px; right: 22px; }
+
+        /* NEEDLE */
+        .needle-pivot {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .needle {
+            position: absolute;
+            bottom: 22px;
+            left: 50%;
+            width: 6px;
+            height: 105px;
+            background: linear-gradient(to top, var(--leather-dark) 0%, #8b0000 30%, #cc0000 60%, #ff3333 100%);
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(-90deg);
+            border-radius: 3px 3px 0 0;
+            transition: transform 2s cubic-bezier(0.68, -0.3, 0.32, 1.25);
+            box-shadow: 2px 0 4px rgba(0,0,0,0.3);
+        }
+
+        .needle::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 14px solid #ff3333;
+        }
+
+        .needle-cap {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 44px;
+            background: radial-gradient(circle at 35% 35%, var(--brass-light), var(--brass), var(--brass-dark));
+            border-radius: 50%;
+            border: 3px solid var(--leather-dark);
+            box-shadow: 
+                inset 0 2px 8px rgba(255,255,255,0.4),
+                0 4px 12px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .needle-cap i {
+            font-size: 14px;
+            color: var(--leather-dark);
+        }
+
+        /* WEIGHT DISPLAY */
+        .weight-display {
+            background: var(--leather-dark);
+            border: 3px solid var(--brass);
+            border-radius: 8px;
+            padding: 8px 28px;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            box-shadow: 
+                inset 0 4px 15px rgba(0,0,0,0.8),
+                0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .weight-value {
+            font-family: 'Rye', cursive;
+            font-size: 44px;
+            color: #ff6b35;
+            text-shadow: 0 0 15px rgba(255, 107, 53, 0.8);
+            letter-spacing: 2px;
+        }
+
+        .weight-unit {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            color: var(--brass);
+            letter-spacing: 1px;
+        }
+
+        /* NAME BADGE */
+        .name-badge {
+            margin-top: 10px;
+            background: linear-gradient(180deg, var(--wood-medium) 0%, var(--wood-dark) 100%);
+            border: 2px solid var(--brass-dark);
+            border-radius: 6px;
+            padding: 6px 24px;
+            text-align: center;
+        }
+
+        .name-label {
+            font-family: 'IM Fell English SC', serif;
+            font-size: 9px;
+            color: var(--brass);
+            letter-spacing: 2px;
+        }
+
+        .name-value {
+            font-family: 'Rye', cursive;
+            font-size: 18px;
+            color: var(--parchment);
+            letter-spacing: 1px;
+        }
+
+        /* RIGHT SIDE - INFO PANEL */
+        .info-panel {
+            background: 
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"),
+                linear-gradient(180deg, var(--parchment) 0%, var(--parchment-dark) 100%);
+            border-left: 3px solid var(--wood-medium);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow: hidden;
+        }
+
+        /* VERDICT BOX */
+        .verdict-box {
+            background: var(--leather-dark);
+            border: 2px solid var(--wood-medium);
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            transition: all 0.4s;
+        }
+
+        .verdict-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .verdict-icon {
+            font-size: 26px;
+            transition: all 0.4s;
+        }
+
+        .verdict-title {
+            font-family: 'Rye', cursive;
+            font-size: 18px;
+            color: var(--parchment);
+            letter-spacing: 1px;
+            transition: all 0.4s;
+        }
+
+        .bounty-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .bounty-label {
+            font-family: 'IM Fell English SC', serif;
+            font-size: 9px;
+            color: var(--parchment-dark);
+            letter-spacing: 1px;
+        }
+
+        .bounty-value {
+            font-family: 'Rye', cursive;
+            font-size: 16px;
+            color: #58D68D;
+            text-shadow: 0 0 8px rgba(88, 214, 141, 0.5);
+        }
+
+        /* Verdict Colors */
+        .verdict-box.skeleton { border-color: #5DADE2; box-shadow: inset 0 0 15px rgba(93, 173, 226, 0.2); }
+        .verdict-box.skeleton .verdict-icon,
+        .verdict-box.skeleton .verdict-title { color: #5DADE2; }
+
+        .verdict-box.slim { border-color: #58D68D; box-shadow: inset 0 0 15px rgba(88, 214, 141, 0.2); }
+        .verdict-box.slim .verdict-icon,
+        .verdict-box.slim .verdict-title { color: #58D68D; }
+
+        .verdict-box.average { border-color: #F4D03F; box-shadow: inset 0 0 15px rgba(244, 208, 63, 0.2); }
+        .verdict-box.average .verdict-icon,
+        .verdict-box.average .verdict-title { color: #F4D03F; }
+
+        .verdict-box.chonky { border-color: #E67E22; box-shadow: inset 0 0 15px rgba(230, 126, 34, 0.2); }
+        .verdict-box.chonky .verdict-icon,
+        .verdict-box.chonky .verdict-title { color: #E67E22; }
+
+        .verdict-box.unit { border-color: #E74C3C; box-shadow: inset 0 0 15px rgba(231, 76, 60, 0.2); }
+        .verdict-box.unit .verdict-icon,
+        .verdict-box.unit .verdict-title { color: #E74C3C; }
+
+        /* MESSAGE CARD */
+        .message-card {
+            background: var(--cream);
+            border: 2px solid var(--wood-medium);
+            border-left: 4px solid var(--rust);
+            border-radius: 4px;
+            padding: 8px 10px;
+        }
+
+        .message-label {
+            font-family: 'IM Fell English SC', serif;
+            font-size: 9px;
+            color: var(--rust);
+            letter-spacing: 1px;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .message-text {
+            font-family: Georgia, serif;
+            font-size: 12px;
+            font-style: italic;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+
+        /* NOTES GRID */
+        .notes-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .note-item {
+            background: var(--cream);
+            border: 2px solid var(--wood-medium);
+            border-radius: 4px;
+            padding: 6px 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .note-icon {
+            width: 26px;
+            height: 26px;
+            background: var(--leather-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brass);
+            font-size: 11px;
+            flex-shrink: 0;
+        }
+
+        .note-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .note-label {
+            font-family: 'IM Fell English SC', serif;
+            font-size: 8px;
+            color: var(--rust);
+            letter-spacing: 1px;
+        }
+
+        .note-text {
+            font-family: Georgia, serif;
+            font-size: 10px;
+            color: var(--text-dark);
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* STATS ROW */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+        }
+
+        .stat-box {
+            background: var(--leather-dark);
+            border: 2px solid var(--wood-medium);
+            border-radius: 4px;
+            padding: 5px 2px;
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 12px;
+            color: var(--brass);
+            margin-bottom: 2px;
+        }
+
+        .stat-value {
+            font-family: 'Rye', cursive;
+            font-size: 13px;
+            color: #ff6b35;
+            text-shadow: 0 0 6px rgba(255, 107, 53, 0.5);
+        }
+
+        .stat-label {
+            font-family: 'IM Fell English SC', serif;
+            font-size: 7px;
+            color: var(--parchment-dark);
+            letter-spacing: 0.5px;
+        }
+
+        /* Scale Platform */
+        .scale-platform {
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            right: 315px;
+            height: 6px;
+            background: linear-gradient(180deg, var(--brass) 0%, var(--brass-dark) 100%);
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           LETTER/SLIP MODE STYLES
+           ═══════════════════════════════════════════════════════ */
+
+        .letter-frame {
+            display: none;
+            width: 520px;
+            position: relative;
+            animation: letterAppear 0.5s ease;
+        }
+
+        .letter-frame.active {
+            display: block;
+        }
+
+        @keyframes letterAppear {
+            from { 
+                transform: scale(0.8) rotate(-2deg); 
+                opacity: 0; 
+            }
+            to { 
+                transform: scale(1) rotate(0deg); 
+                opacity: 1; 
+            }
+        }
+
+        /* Paper Effect */
+        .letter-paper {
+            background: 
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E"),
+                linear-gradient(180deg, 
+                    var(--parchment-light) 0%, 
+                    var(--parchment) 15%,
+                    var(--parchment) 85%,
+                    var(--parchment-dark) 100%);
+            padding: 30px 35px;
+            position: relative;
+            box-shadow: 
+                0 3px 15px rgba(0,0,0,0.3),
+                0 10px 40px rgba(0,0,0,0.2),
+                inset 0 0 80px rgba(139, 69, 19, 0.1);
+            border: 1px solid var(--parchment-dark);
+        }
+
+        /* Torn edges effect */
+        .letter-paper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, 
+                transparent 0%, var(--parchment-light) 2%, 
+                transparent 4%, var(--parchment-light) 8%,
+                transparent 10%, var(--parchment-light) 15%,
+                transparent 18%, var(--parchment-light) 22%,
+                transparent 25%, var(--parchment-light) 30%,
+                transparent 33%, var(--parchment-light) 38%,
+                transparent 42%, var(--parchment-light) 48%,
+                transparent 52%, var(--parchment-light) 58%,
+                transparent 62%, var(--parchment-light) 68%,
+                transparent 72%, var(--parchment-light) 78%,
+                transparent 82%, var(--parchment-light) 88%,
+                transparent 92%, var(--parchment-light) 98%,
+                transparent 100%);
+            transform: translateY(-4px);
+        }
+
+        /* Coffee stain */
+        .coffee-stain {
+            position: absolute;
+            top: 50px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, 
+                transparent 40%, 
+                rgba(101, 67, 33, 0.08) 50%,
+                rgba(101, 67, 33, 0.12) 60%,
+                rgba(101, 67, 33, 0.06) 70%,
+                transparent 80%);
+            pointer-events: none;
+        }
+
+        /* Close Button for Letter */
+        .letter-close {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 36px;
+            height: 36px;
+            background: var(--leather-dark);
+            border: 2px solid var(--brass);
+            border-radius: 50%;
+            color: var(--parchment);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+        }
+
+        .letter-close:hover {
+            background: var(--red-wax);
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        /* Letter Header */
+        .letter-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--ink-faded);
+            position: relative;
+        }
+
+        .letter-header::after {
+            content: '✦ ✦ ✦';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--parchment);
+            padding: 0 15px;
+            color: var(--ink-faded);
+            font-size: 10px;
+            letter-spacing: 8px;
+        }
+
+        .letter-logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 10px;
+            background: radial-gradient(circle at 30% 30%, var(--brass-light), var(--brass), var(--brass-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--leather-dark);
+            border: 3px solid var(--leather-dark);
+            box-shadow: 
+                0 4px 15px rgba(0,0,0,0.3),
+                inset 0 2px 5px rgba(255,255,255,0.3);
+        }
+
+        .letter-title {
+            font-family: 'Rye', cursive;
+            font-size: 24px;
+            color: var(--ink);
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .letter-subtitle {
+            font-family: 'IM Fell English SC', serif;
+            font-size: 11px;
+            color: var(--ink-faded);
+            letter-spacing: 3px;
+        }
+
+        /* Letter Date */
+        .letter-date {
+            text-align: right;
+            font-family: 'Pinyon Script', cursive;
+            font-size: 16px;
+            color: var(--ink-faded);
+            margin-bottom: 15px;
+        }
+
+        /* Letter Body */
+        .letter-body {
+            font-family: 'IM Fell English SC', serif;
+            color: var(--ink);
+            line-height: 1.5;
+        }
+
+        .letter-greeting {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 20px;
+            color: var(--ink);
+            margin-bottom: 12px;
+        }
+
+        .letter-paragraph {
+            font-size: 13px;
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        /* Weight Result Box */
+        .letter-result {
+            background: var(--leather-dark);
+            border: 3px solid var(--brass);
+            padding: 15px 20px;
+            margin: 15px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .letter-result::before,
+        .letter-result::after {
+            content: '☆';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: var(--brass);
+        }
+
+        .letter-result::before { left: 10px; }
+        .letter-result::after { right: 10px; }
+
+        .result-weight {
+            font-family: 'Rye', cursive;
+            font-size: 38px;
+            color: #ff6b35;
+            text-shadow: 0 0 15px rgba(255, 107, 53, 0.6);
+            letter-spacing: 3px;
+        }
+
+        .result-unit {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            color: var(--brass);
+            margin-left: 6px;
+        }
+
+        .result-category {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--brass-dark);
+        }
+
+        .result-icon {
+            font-size: 24px;
+            margin-right: 8px;
+        }
+
+        .result-title {
+            font-family: 'Rye', cursive;
+            font-size: 18px;
+            color: var(--parchment);
+        }
+
+        /* Bounty Value in Letter */
+        .letter-bounty {
+            text-align: center;
+            margin: 12px 0;
+            padding: 10px;
+            background: linear-gradient(90deg, transparent, rgba(88, 214, 141, 0.1), transparent);
+            border-top: 1px dashed var(--ink-faded);
+            border-bottom: 1px dashed var(--ink-faded);
+        }
+
+        .letter-bounty-label {
+            font-size: 10px;
+            color: var(--ink-faded);
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .letter-bounty-value {
+            font-family: 'Rye', cursive;
+            font-size: 22px;
+            color: #2d8a4e;
+            text-shadow: 0 0 10px rgba(88, 214, 141, 0.3);
+        }
+
+        /* Letter Stats Grid */
+        .letter-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .letter-stat {
+            text-align: center;
+            padding: 8px 5px;
+            background: rgba(0,0,0,0.04);
+            border: 1px solid var(--ink-faded);
+        }
+
+        .letter-stat-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--leather-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brass);
+            font-size: 12px;
+            margin: 0 auto 5px;
+        }
+
+        .letter-stat-label {
+            font-size: 8px;
+            color: var(--ink-faded);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .letter-stat-value {
+            font-family: 'Rye', cursive;
+            font-size: 14px;
+            color: var(--ink);
+        }
+
+        /* Comedy Notes Section */
+        .letter-notes {
+            margin: 15px 0;
+            border: 2px solid var(--ink-faded);
+            background: rgba(0,0,0,0.03);
+        }
+
+        .letter-notes-header {
+            background: var(--leather-dark);
+            color: var(--brass);
+            padding: 8px 12px;
+            font-family: 'Rye', cursive;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .letter-notes-content {
+            padding: 12px;
+        }
+
+        .letter-note-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--ink-faded);
+        }
+
+        .letter-note-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .letter-note-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--leather-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brass);
+            font-size: 11px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .letter-note-content {
+            flex: 1;
+        }
+
+        .letter-note-label {
+            font-family: 'IM Fell English SC', serif;
+            font-size: 9px;
+            color: var(--rust);
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .letter-note-text {
+            font-family: Georgia, serif;
+            font-size: 12px;
+            font-style: italic;
+            color: var(--ink);
+            line-height: 1.4;
+        }
+
+        /* Doctor's Main Comment */
+        .letter-comment {
+            background: rgba(139, 69, 19, 0.08);
+            border-left: 4px solid var(--rust);
+            padding: 12px 15px;
+            margin: 15px 0;
+        }
+
+        .letter-comment-label {
+            font-family: 'IM Fell English SC', serif;
+            font-size: 10px;
+            color: var(--rust);
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .letter-comment-text {
+            font-family: Georgia, serif;
+            font-size: 14px;
+            font-style: italic;
+            color: var(--ink);
+            line-height: 1.5;
+        }
+
+        /* Letter Footer */
+        .letter-footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--ink-faded);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .letter-signature {
+            text-align: left;
+        }
+
+        .signature-label {
+            font-size: 9px;
+            color: var(--ink-faded);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .signature-name {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 26px;
+            color: var(--ink);
+        }
+
+        .signature-title {
+            font-family: 'IM Fell English SC', serif;
+            font-size: 10px;
+            color: var(--ink-faded);
+        }
+
+        /* Wax Seal */
+        .wax-seal {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 35% 35%, 
+                #c41e3a 0%, 
+                var(--red-wax) 40%, 
+                #5c0a0a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 4px 15px rgba(0,0,0,0.4),
+                inset 0 -3px 10px rgba(0,0,0,0.3),
+                inset 0 3px 8px rgba(255,255,255,0.2);
+            position: relative;
+        }
+
+        .wax-seal::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 50%;
+        }
+
+        .wax-seal i {
+            font-size: 24px;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 2px 3px rgba(0,0,0,0.3);
+        }
+
+        /* Responsive */
+        @media (max-height: 750px) {
+            .letter-frame {
+                transform: scale(0.9);
+            }
+        }
+
+        @media (max-height: 650px) {
+            .scale-frame {
+                transform: scale(0.85);
+            }
+            .letter-frame {
+                transform: scale(0.8);
+            }
+        }
+
+        @media (max-height: 550px) {
+            .letter-frame {
+                transform: scale(0.7);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="weightScale">
+        
+        <!-- ═══════════════════════════════════════════════════════
+             SCALE MODE
+             ═══════════════════════════════════════════════════════ -->
+        <div class="scale-frame" id="scaleFrame">
+            <div class="bolt bolt-tl"></div>
+            <div class="bolt bolt-tr"></div>
+            <div class="bolt bolt-bl"></div>
+            <div class="bolt bolt-br"></div>
+
+            <div class="header-bar">
+                <div class="brand">
+                    <div class="brand-icon"><i class="fas fa-weight-hanging"></i></div>
+                    <div class="brand-text">FRONTIER SCALE CO.</div>
+                </div>
+                <div class="header-date" id="scaleDateDisplay">Est. 1872</div>
+                <button class="close-btn" id="scaleCloseBtn"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="scale-section">
+                <div class="gauge-container">
+                    <div class="gauge-body">
+                        <svg class="gauge-arc" viewBox="0 0 260 135" preserveAspectRatio="xMidYMid meet">
+                            <path d="M 18 125 A 112 112 0 0 1 242 125" fill="none" stroke="#c4b08a" stroke-width="18" stroke-linecap="round"/>
+                            <path d="M 18 125 A 112 112 0 0 1 58 48" fill="none" stroke="#5DADE2" stroke-width="16" stroke-linecap="round" opacity="0.7"/>
+                            <path d="M 58 48 A 112 112 0 0 1 100 22" fill="none" stroke="#58D68D" stroke-width="16" opacity="0.7"/>
+                            <path d="M 100 22 A 112 112 0 0 1 160 22" fill="none" stroke="#F4D03F" stroke-width="16" opacity="0.7"/>
+                            <path d="M 160 22 A 112 112 0 0 1 202 48" fill="none" stroke="#E67E22" stroke-width="16" opacity="0.7"/>
+                            <path d="M 202 48 A 112 112 0 0 1 242 125" fill="none" stroke="#E74C3C" stroke-width="16" stroke-linecap="round" opacity="0.7"/>
+                            <g stroke="#1a0f05" stroke-width="2">
+                                <line x1="22" y1="120" x2="32" y2="112" />
+                                <line x1="40" y1="78" x2="52" y2="84" />
+                                <line x1="75" y1="42" x2="85" y2="52" />
+                                <line x1="130" y1="22" x2="130" y2="36" />
+                                <line x1="185" y1="42" x2="175" y2="52" />
+                                <line x1="220" y1="78" x2="208" y2="84" />
+                                <line x1="238" y1="120" x2="228" y2="112" />
+                            </g>
+                        </svg>
+                        <div class="gauge-numbers">
+                            <span class="g-num g-num-0">0</span>
+                            <span class="g-num g-num-50">50</span>
+                            <span class="g-num g-num-100">100</span>
+                            <span class="g-num g-num-150">150</span>
+                            <span class="g-num g-num-200">200</span>
+                            <span class="g-num g-num-250">250</span>
+                            <span class="g-num g-num-300">300</span>
+                        </div>
+                        <div class="needle-pivot">
+                            <div class="needle" id="needle"></div>
+                            <div class="needle-cap"><i class="fas fa-star"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="weight-display">
+                    <span class="weight-value" id="weightValue">000</span>
+                    <span class="weight-unit" id="weightUnit">LBS</span>
+                </div>
+
+                <div class="name-badge">
+                    <div class="name-label">PATIENT NAME</div>
+                    <div class="name-value" id="patientName">UNKNOWN</div>
+                </div>
+
+                <div class="scale-platform"></div>
+            </div>
+
+            <div class="info-panel">
+                <div class="verdict-box" id="verdictBox">
+                    <div class="verdict-header">
+                        <span class="verdict-icon" id="verdictIcon">⚖️</span>
+                        <span class="verdict-title" id="verdictTitle">MEASURING...</span>
+                    </div>
+                    <div class="bounty-line">
+                        <span class="bounty-label">BOUNTY VALUE:</span>
+                        <span class="bounty-value" id="bountyValue">$0</span>
+                    </div>
+                </div>
+
+                <div class="message-card">
+                    <div class="message-label"><i class="fas fa-comment-dots"></i> DOCTOR'S REMARKS</div>
+                    <div class="message-text" id="scaleMessage">Step on the scale, partner...</div>
+                </div>
+
+                <div class="notes-grid">
+                    <div class="note-item">
+                        <div class="note-icon"><i class="fas fa-heart-pulse"></i></div>
+                        <div class="note-content">
+                            <div class="note-label">CONDITION</div>
+                            <div class="note-text" id="noteCondition">Awaiting measurement...</div>
+                        </div>
+                    </div>
+                    <div class="note-item">
+                        <div class="note-icon"><i class="fas fa-utensils"></i></div>
+                        <div class="note-content">
+                            <div class="note-label">DIETARY ADVICE</div>
+                            <div class="note-text" id="noteDiet">Awaiting measurement...</div>
+                        </div>
+                    </div>
+                    <div class="note-item">
+                        <div class="note-icon"><i class="fas fa-horse"></i></div>
+                        <div class="note-content">
+                            <div class="note-label">HORSE OPINION</div>
+                            <div class="note-text" id="noteHorse">Awaiting measurement...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <div class="stat-icon"><i class="fas fa-fire"></i></div>
+                        <div class="stat-value" id="statCal">0</div>
+                        <div class="stat-label">CALORIES</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon"><i class="fas fa-jar"></i></div>
+                        <div class="stat-value" id="statBeans">0</div>
+                        <div class="stat-label">BEANS</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon"><i class="fas fa-skull"></i></div>
+                        <div class="stat-value" id="statDanger">-</div>
+                        <div class="stat-label">DANGER</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon"><i class="fas fa-whiskey-glass"></i></div>
+                        <div class="stat-value" id="statWhiskey">0</div>
+                        <div class="stat-label">WHISKEY</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════
+             LETTER/SLIP MODE
+             ═══════════════════════════════════════════════════════ -->
+        <div class="letter-frame" id="letterFrame">
+            <button class="letter-close" id="letterCloseBtn"><i class="fas fa-times"></i></button>
+            
+            <div class="letter-paper">
+                <div class="coffee-stain"></div>
+
+                <!-- Header -->
+                <div class="letter-header">
+                    <div class="letter-logo"><i class="fas fa-weight-hanging"></i></div>
+                    <div class="letter-title">FRONTIER SCALE CO.</div>
+                    <div class="letter-subtitle">OFFICIAL WEIGHT CERTIFICATE</div>
+                </div>
+
+                <!-- Date -->
+                <div class="letter-date" id="letterDate">December 15th, 1899</div>
+
+                <!-- Body -->
+                <div class="letter-body">
+                    <div class="letter-greeting">To Whom It May Concern,</div>
+                    
+                    <p class="letter-paragraph">
+                        This document certifies that the individual below did present themselves 
+                        at our establishment for official weighing and assessment.
+                    </p>
+
+                    <!-- Weight Result -->
+                    <div class="letter-result">
+                        <div>
+                            <span class="result-weight" id="letterWeight">000</span>
+                            <span class="result-unit" id="letterUnit">LBS</span>
+                        </div>
+                        <div class="result-category">
+                            <span class="result-icon" id="letterIcon">⚖️</span>
+                            <span class="result-title" id="letterCategory">REGULAR JOE</span>
+                        </div>
+                    </div>
+
+                    <!-- Bounty -->
+                    <div class="letter-bounty">
+                        <div class="letter-bounty-label">ESTIMATED BOUNTY VALUE</div>
+                        <div class="letter-bounty-value" id="letterBounty">$150</div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="letter-stats">
+                        <div class="letter-stat">
+                            <div class="letter-stat-icon"><i class="fas fa-fire"></i></div>
+                            <div class="letter-stat-label">Calories</div>
+                            <div class="letter-stat-value" id="letterCal">0</div>
+                        </div>
+                        <div class="letter-stat">
+                            <div class="letter-stat-icon"><i class="fas fa-jar"></i></div>
+                            <div class="letter-stat-label">Beans</div>
+                            <div class="letter-stat-value" id="letterBeans">0</div>
+                        </div>
+                        <div class="letter-stat">
+                            <div class="letter-stat-icon"><i class="fas fa-skull"></i></div>
+                            <div class="letter-stat-label">Danger</div>
+                            <div class="letter-stat-value" id="letterDanger">-</div>
+                        </div>
+                        <div class="letter-stat">
+                            <div class="letter-stat-icon"><i class="fas fa-whiskey-glass"></i></div>
+                            <div class="letter-stat-label">Whiskey</div>
+                            <div class="letter-stat-value" id="letterWhiskey">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Doctor's Main Comment -->
+                    <div class="letter-comment">
+                        <div class="letter-comment-label"><i class="fas fa-quote-left"></i> PHYSICIAN'S REMARKS</div>
+                        <div class="letter-comment-text" id="letterComment">"A fine specimen of humanity."</div>
+                    </div>
+
+                    <!-- Additional Comedy Notes -->
+                    <div class="letter-notes">
+                        <div class="letter-notes-header"><i class="fas fa-clipboard-list"></i> ADDITIONAL OBSERVATIONS</div>
+                        <div class="letter-notes-content">
+                            <div class="letter-note-item">
+                                <div class="letter-note-icon"><i class="fas fa-heart-pulse"></i></div>
+                                <div class="letter-note-content">
+                                    <div class="letter-note-label">MEDICAL CONDITION</div>
+                                    <div class="letter-note-text" id="letterCondition">Pulse: Textbook boring.</div>
+                                </div>
+                            </div>
+                            <div class="letter-note-item">
+                                <div class="letter-note-icon"><i class="fas fa-utensils"></i></div>
+                                <div class="letter-note-content">
+                                    <div class="letter-note-label">DIETARY PRESCRIPTION</div>
+                                    <div class="letter-note-text" id="letterDiet">Keep doin' whatever yer doin'.</div>
+                                </div>
+                            </div>
+                            <div class="letter-note-item">
+                                <div class="letter-note-icon"><i class="fas fa-horse"></i></div>
+                                <div class="letter-note-content">
+                                    <div class="letter-note-label">EQUINE ASSESSMENT</div>
+                                    <div class="letter-note-text" id="letterHorse">"You're adequate. That'll do."</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="letter-footer">
+                    <div class="letter-signature">
+                        <div class="signature-label">CERTIFIED BY</div>
+                        <div class="signature-name">Dr. Cornelius Blackwood</div>
+                        <div class="signature-title">Licensed Physician & Scale Operator</div>
+                    </div>
+                    <div class="wax-seal">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════
+        // COMICAL CONTENT
+        // ═══════════════════════════════════════════════════════
+
+        const comments = {
+            skeleton: [
+                '"Sweet Jesus! I\'ve seen more meat on a butcher\'s pencil!"',
+                '"The wind outside is takin\' bets on carryin\' ya off!"',
+                '"Boy, you\'re thinner than a snake\'s suspenders!"',
+                '"Even the undertaker said you ain\'t worth the wood!"',
+                '"A tumbleweed just called ya \'lightweight.\'"',
+                '"Your shadow weighs more than you do, partner."',
+                '"The vultures flew right past — said you ain\'t worth the stop."',
+                '"One good sneeze and you\'ll be in the next county!"'
+            ],
+            slim: [
+                '"Built like a bullwhip — fast, mean, and dangerous!"',
+                '"Your horse just let out a sigh of relief!"',
+                '"Slicker than a greased pig at the county fair!"',
+                '"The Sheriff\'s gonna have a hell of a time catchin\' YOU!"',
+                '"Quick as a hiccup and twice as surprising!"',
+                '"Lean as a coyote in winter — perfect for outlawin\'!"',
+                '"You could slip through a jailhouse bar sideways!"',
+                '"Agile as a jackrabbit on a hot griddle!"'
+            ],
+            average: [
+                '"Well, ain\'t you just... perfectly ordinary."',
+                '"The scale yawned. That\'s how average you are."',
+                '"Not too fat, not too thin — just... there."',
+                '"Congratulations on bein\' completely forgettable!"',
+                '"You\'re the human equivalent of room temperature water."',
+                '"Your wanted poster would be... medium. In every way."',
+                '"The Goldilocks of outlaws — boringly \'just right.\'"',
+                '"Regular as a two-dollar watch. Nothin\' to report."'
+            ],
+            chonky: [
+                '"The floorboards just filed a formal complaint!"',
+                '"You\'ve clearly won every argument with supper!"',
+                '"Your belt deserves a medal of bravery, partner."',
+                '"When you sit around the campfire, you sit AROUND it!"',
+                '"That poor horse of yours is organizin\' a union!"',
+                '"Built for comfort, intimidation, AND blockin\' doorways!"',
+                '"The \'all you can eat\' sign just burst into tears."',
+                '"You don\'t cast a shadow — you cast a TERRITORY."'
+            ],
+            unit: [
+                '"SWEET MOTHER OF MERCY! The scale is prayin\'!"',
+                '"You don\'t need a horse — YOU ARE the transportation!"',
+                '"Your wanted poster needs its own wagon to carry it!"',
+                '"The earth itself trembles at yer footsteps!"',
+                '"Legend says you once ate a whole buffalo. FOR A SNACK."',
+                '"Scientists wanna study yer gravitational pull!"',
+                '"You don\'t rob trains — trains pay YOU protection money!"',
+                '"The scale just wrote its last will and testament."',
+                '"ABSOLUTE UNIT! They\'re gonna need a bigger jail!"',
+                '"Yer mass has been officially classified as a geological event!"'
+            ]
+        };
+
+        const conditions = {
+            skeleton: [
+                "Pulse: More of a suggestion than a fact.",
+                "Status: One strong breeze from meetin' yer maker.",
+                "Diagnosis: Mostly spirit, barely body.",
+                "Vitals: Present, but clearly uncommitted."
+            ],
+            slim: [
+                "Pulse: Quick as a rattlesnake's tongue!",
+                "Status: Fit as a fiddle, sharp as a tack!",
+                "Diagnosis: Built for speed, not comfort.",
+                "Vitals: Primed and ready for trouble!"
+            ],
+            average: [
+                "Pulse: Textbook boring. Congratulations.",
+                "Status: The very definition of 'meh.'",
+                "Diagnosis: Unremarkably, disappointingly healthy.",
+                "Vitals: Nothin' to write home about. At all."
+            ],
+            chonky: [
+                "Pulse: Workin' double shifts, no overtime pay.",
+                "Status: Well-insulated for ALL seasons.",
+                "Diagnosis: Yer organs are playin' Tetris.",
+                "Vitals: Strained but somehow still determined."
+            ],
+            unit: [
+                "Pulse: The stethoscope surrendered.",
+                "Status: YOU are the medical emergency.",
+                "Diagnosis: Science itself is baffled.",
+                "Vitals: Off EVERY chart we got!"
+            ]
+        };
+
+        const diets = {
+            skeleton: [
+                "EAT. Anything. The table. ANYTHING.",
+                "Ever tried food? Revolutionary concept.",
+                "Yer 'breatharian' diet ain't workin'.",
+                "Prescription: Steak. Beans. Whiskey. Repeat."
+            ],
+            slim: [
+                "An extra biscuit wouldn't hurt ya!",
+                "Yer salad is lonely — add some bacon.",
+                "Consider: PIE. It exists. Embrace it.",
+                "Add some gravy to yer life."
+            ],
+            average: [
+                "Keep doin' whatever yer doin'.",
+                "Adequate nutrition. The beige of meals.",
+                "No changes needed. How dull.",
+                "You've achieved nutritional mediocrity."
+            ],
+            chonky: [
+                "Salads exist. I was shocked too.",
+                "Walk PAST the saloon once in a while?",
+                "Yer 'see food' diet needs revision.",
+                "Portion control. Look it up."
+            ],
+            unit: [
+                "The buffet filed a restrainin' order.",
+                "Yer diet is a guided restaurant tour.",
+                "Prescription: Divine intervention.",
+                "Even the beans are beggin' for mercy."
+            ]
+        };
+
+        const horses = {
+            skeleton: [
+                '"Finally! A VACATION for my spine!"',
+                '"Where\'s the rest of ya, partner?"',
+                '"I can carry you AND yer possessions!"',
+                '"*Relieved horse noises*"'
+            ],
+            slim: [
+                '"THIS is what I signed up for!"',
+                '"We can outrun ANYTHING!"',
+                '"*Approving snort* A sensible human!"',
+                '"We\'re gonna be LEGENDS."'
+            ],
+            average: [
+                '"Eh. I\'ve had worse. You\'re fine."',
+                '"*Indifferent horse shrug*"',
+                '"No complaints. No compliments neither."',
+                '"You\'re adequate. That\'ll do."'
+            ],
+            chonky: [
+                '"We need to talk, partner."',
+                '"*Visible horse sweating*"',
+                '"My chiropractor sends his bill."',
+                '"Have you considered walkin\'?"'
+            ],
+            unit: [
+                '"I QUIT. Effective immediately."',
+                '"I\'m becomin\' a cow. Goodbye."',
+                '"*Horse has left the territory*"',
+                '"YOU are the transportation now."'
+            ]
+        };
+
+        // ═══════════════════════════════════════════════════════
+        // FUNCTIONS
+        // ═══════════════════════════════════════════════════════
+
+        function getCategory(weight) {
+            if (weight < 100) return { key: 'skeleton', name: 'BONES McGEE', icon: '💀', bounty: 5 };
+            if (weight < 140) return { key: 'slim', name: 'SLIM PICKENS', icon: '🏃', bounty: 75 };
+            if (weight < 180) return { key: 'average', name: 'REGULAR JOE', icon: '⚖️', bounty: 150 };
+            if (weight < 230) return { key: 'chonky', name: 'BIG FELLA', icon: '🐻', bounty: 400 };
+            return { key: 'unit', name: 'ABSOLUTE UNIT', icon: '🦬', bounty: 1000 };
+        }
+
+        function getRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function getStats(weight, cat) {
+            let c, b, d, w;
+            switch(cat.key) {
+                case 'skeleton': c = weight * 28; b = Math.ceil(weight/4); d = 'LOW'; w = Math.floor(weight/18); break;
+                case 'slim': c = weight * 24; b = Math.ceil(weight/6); d = 'MED'; w = Math.floor(weight/14); break;
+                case 'average': c = weight * 20; b = Math.ceil(weight/8); d = 'MED'; w = Math.floor(weight/11); break;
+                case 'chonky': c = weight * 16; b = Math.ceil(weight/10); d = 'HIGH'; w = Math.floor(weight/8); break;
+                default: c = weight * 12; b = Math.ceil(weight/12); d = 'MAX!'; w = Math.floor(weight/5);
+            }
+            return { cal: Math.floor(c), beans: b, danger: d, whiskey: w };
+        }
+
+        function animateNum(el, start, end, duration) {
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(ease * (end - start) + start);
+                el.textContent = String(current).padStart(3, '0');
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // SHOW SCALE
+        // ═══════════════════════════════════════════════════════
+
+        function showScale(data) {
+            const container = document.getElementById('weightScale');
+            const scaleFrame = document.getElementById('scaleFrame');
+            const letterFrame = document.getElementById('letterFrame');
+            
+            container.classList.add('active');
+            
+            if (data.isSlip) {
+                scaleFrame.classList.remove('active');
+                letterFrame.classList.add('active');
+                showLetter(data);
+            } else {
+                letterFrame.classList.remove('active');
+                scaleFrame.classList.add('active');
+                showGauge(data);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // SHOW GAUGE (Scale Mode)
+        // ═══════════════════════════════════════════════════════
+
+        function showGauge(data) {
+            const els = {
+                name: document.getElementById('patientName'),
+                weight: document.getElementById('weightValue'),
+                unit: document.getElementById('weightUnit'),
+                needle: document.getElementById('needle'),
+                verdictBox: document.getElementById('verdictBox'),
+                verdictIcon: document.getElementById('verdictIcon'),
+                verdictTitle: document.getElementById('verdictTitle'),
+                bounty: document.getElementById('bountyValue'),
+                message: document.getElementById('scaleMessage'),
+                condition: document.getElementById('noteCondition'),
+                diet: document.getElementById('noteDiet'),
+                horse: document.getElementById('noteHorse'),
+                cal: document.getElementById('statCal'),
+                beans: document.getElementById('statBeans'),
+                danger: document.getElementById('statDanger'),
+                whiskey: document.getElementById('statWhiskey'),
+                date: document.getElementById('scaleDateDisplay')
+            };
+
+            els.name.textContent = data.playerName.toUpperCase();
+            els.unit.textContent = data.unit.toUpperCase();
+            els.date.textContent = data.date || 'Est. 1872';
+
+            const cat = getCategory(data.weight);
+            const stats = getStats(data.weight, cat);
+            const rot = -90 + (Math.min(data.weight, 300) / 300) * 180;
+
+            animateNum(els.weight, 0, data.weight, 2000);
+            els.needle.style.transition = 'transform 2s cubic-bezier(0.68, -0.3, 0.32, 1.25)';
+            setTimeout(function() {
+                els.needle.style.transform = 'translateX(-50%) rotate(' + rot + 'deg)';
+            }, 150);
+            setTimeout(updateContent, 2100);
+
+            function updateContent() {
+                els.verdictBox.className = 'verdict-box ' + cat.key;
+                els.verdictIcon.textContent = cat.icon;
+                els.verdictTitle.textContent = cat.name;
+                els.bounty.textContent = '$' + cat.bounty.toLocaleString();
+
+                els.message.textContent = getRandom(comments[cat.key]);
+                els.condition.textContent = getRandom(conditions[cat.key]);
+                els.diet.textContent = getRandom(diets[cat.key]);
+                els.horse.textContent = getRandom(horses[cat.key]);
+
+                els.cal.textContent = stats.cal;
+                els.beans.textContent = stats.beans;
+                els.danger.textContent = stats.danger;
+                els.whiskey.textContent = stats.whiskey;
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // SHOW LETTER (Weight Slip Mode)
+        // ═══════════════════════════════════════════════════════
+
+        function showLetter(data) {
+            const cat = getCategory(data.weight);
+            const stats = getStats(data.weight, cat);
+
+            // Date
+            document.getElementById('letterDate').textContent = data.date || 'Date Unknown';
+
+            // Weight
+            document.getElementById('letterWeight').textContent = String(data.weight).padStart(3, '0');
+            document.getElementById('letterUnit').textContent = data.unit.toUpperCase();
+
+            // Category
+            document.getElementById('letterIcon').textContent = cat.icon;
+            document.getElementById('letterCategory').textContent = cat.name;
+
+            // Apply color to category
+            const resultCategory = document.querySelector('.result-category');
+            resultCategory.style.color = getCategoryColor(cat.key);
+
+            // Bounty
+            document.getElementById('letterBounty').textContent = '$' + cat.bounty.toLocaleString();
+
+            // Stats
+            document.getElementById('letterCal').textContent = stats.cal;
+            document.getElementById('letterBeans').textContent = stats.beans;
+            document.getElementById('letterDanger').textContent = stats.danger;
+            document.getElementById('letterWhiskey').textContent = stats.whiskey;
+
+            // Main Comment
+            document.getElementById('letterComment').textContent = getRandom(comments[cat.key]);
+
+            // Additional Comedy Notes
+            document.getElementById('letterCondition').textContent = getRandom(conditions[cat.key]);
+            document.getElementById('letterDiet').textContent = getRandom(diets[cat.key]);
+            document.getElementById('letterHorse').textContent = getRandom(horses[cat.key]);
+        }
+
+        function getCategoryColor(key) {
+            const colors = {
+                skeleton: '#5DADE2',
+                slim: '#58D68D',
+                average: '#F4D03F',
+                chonky: '#E67E22',
+                unit: '#E74C3C'
+            };
+            return colors[key] || '#F4D03F';
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // NUI RESOURCE NAME
+        // ═══════════════════════════════════════════════════════
+        
+        let _resourceName = null;
+        
+        function getResourceName() {
+            if (_resourceName) return _resourceName;
+            
+            if (window.invokeNative) {
+                try {
+                    _resourceName = window.GetParentResourceName();
+                } catch (e) {
+                    _resourceName = 'rsg-weightscale';
+                }
+            } else {
+                _resourceName = 'rsg-weightscale';
+            }
+            
+            return _resourceName;
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // EVENT LISTENERS
+        // ═══════════════════════════════════════════════════════
+
+        window.addEventListener('message', function(e) {
+            if (e.data.action === 'showWeight') {
+                showScale(e.data);
+            }
+        });
+
+        document.getElementById('scaleCloseBtn').addEventListener('click', closeUI);
+        document.getElementById('letterCloseBtn').addEventListener('click', closeUI);
+        
+        document.addEventListener('keyup', function(e) {
+            if (e.key === 'Escape') {
+                closeUI();
+            }
+        });
+
+        function closeUI() {
+            const container = document.getElementById('weightScale');
+            const scaleFrame = document.getElementById('scaleFrame');
+            const letterFrame = document.getElementById('letterFrame');
+            
+            container.classList.remove('active');
+            scaleFrame.classList.remove('active');
+            letterFrame.classList.remove('active');
+            
+            // Reset scale elements
+            const needle = document.getElementById('needle');
+            needle.style.transition = 'none';
+            needle.style.transform = 'translateX(-50%) rotate(-90deg)';
+            
+            document.getElementById('weightValue').textContent = '000';
+            document.getElementById('verdictBox').className = 'verdict-box';
+            document.getElementById('verdictIcon').textContent = '⚖️';
+            document.getElementById('verdictTitle').textContent = 'MEASURING...';
+            document.getElementById('scaleMessage').textContent = 'Step on the scale, partner...';
+            document.getElementById('noteCondition').textContent = 'Awaiting measurement...';
+            document.getElementById('noteDiet').textContent = 'Awaiting measurement...';
+            document.getElementById('noteHorse').textContent = 'Awaiting measurement...';
+
+            fetch('https://' + getResourceName() + '/closeUI', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            }).catch(function() {});
+        }
+    </script>
+</body>
+</html>
